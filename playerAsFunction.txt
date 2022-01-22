@@ -1,0 +1,168 @@
+import React, { useState, useCallback, useEffect } from 'react';
+import YouTube from 'react-youtube';
+import { useDispatch } from 'react-redux';
+import { nextSong } from '../actions/mixerActions';
+import { trickShot } from '../actions/playlistActions'
+
+
+function YtPlayer(props) {
+
+    //Video starts when it recieves SHOULD PLAY == TRUE
+    //ON Next Video / on natural end (10 seconds prior to end) >>
+    //Video starts to slow down and recieves NEXT ID (but does not update yet, to be able to finish slow-down)
+    //When video ends (with slowing down), it UPDATES, but still waits (as SoludPlay is FALSE)
+    //When video recieves SHOULD PLAY, it plays (with already set-up parameters)
+
+
+    //video has no next song? gets ''
+    //next song arrives (before preparing for next) >> updates videoId (still no play as SHOULD-PLAY is still false) 
+    //when it is about to prepare for next >> change >> get SHOULD-PLAY >> it gets KNEZ with Should Play as well (KNEZ added to list prior to update state)
+  
+    var player = null;
+
+    const opts = {
+        height: '440',
+        width: '722',
+        playerVars: {  //https://developers.google.com/youtube/player_parameters
+          autoplay: props.shouldPlay ? 1 : 0
+        }
+    };
+
+
+
+    const dispatch = useDispatch()
+
+    const [, updateState] = useState();
+    const forceUpdate = useCallback(() => updateState({}), []);
+
+    var decreaseId = null;
+    var starterId = null;
+    var monitorID = null;
+
+
+    const _onPlayerReady = (event) => {
+        console.log('Ready!')
+        player = event.target;
+        if(props.shouldPlay && (props.videoId))
+        { //prevent starting video when it updates
+            videoStarter()
+        } 
+    }
+
+    const videoStarter = () => {
+        //must pass player like this since componentDidUpdate would not know what to send if we have (event) props
+        player.setVolume(1);
+        let increaseRate = 10
+        player.playVideo(); 
+        
+        starterId = window.setInterval(
+            () => 
+            {
+                player.setVolume(player.getVolume() + increaseRate)
+                if(player.getCurrentTime() >= 10) {
+                    player.setVolume(100)
+                    window.clearInterval(starterId);  
+                }               
+            }, 
+        1000);
+    }
+
+    const _onVideoPlay = (event) => {       
+        //to prevent double-initializing timers (since onPlay is triggered even when a video is fast-forwarded )
+        if(event.target.getCurrentTime() < 0.2) {
+            setDurationMonitor(event.target)
+        }
+    }
+
+    const setDurationMonitor = (player) => {
+        monitorID = setInterval(
+            () => 
+            {
+                if(player.getDuration() - player.getCurrentTime() < 10) {
+                    if(props.isLastSong()) {
+                        dispatch(trickShot())
+                    } else { 
+                        prepareForNext(player) 
+                    }
+                    
+                };
+            },
+            1000
+        );
+    }
+
+    const prepareForNext = (player) => {
+        window.clearInterval(monitorID);
+        decreaseVolume(player);
+        dispatch(nextSong());
+    }
+
+    const onClickNext = () => {
+        if(!props.isLastSong() && player.getCurrentTime() >= 10) //try avoiding 2nd condition
+            prepareForNext(player)
+    }
+
+    const decreaseVolume = (player) => {       
+        let decreaseRate = 10;
+        decreaseId = window.setInterval(
+            () =>
+            {
+                player.setVolume(player.getVolume() - decreaseRate)
+                if(player.getVolume() < 10) {
+                    player.seekTo(player.getDuration()) //trigger ON_END
+                }
+            }, 1000);
+    }
+
+    // const changer = () => {
+    //     dispatch(nextSong());
+    // }
+
+    //prevent from updating if it only being prepared (recieved props for the next video but still should not play)
+    //if NEXT proops tells us we should NOT play, that means we are reaching the end (thus we avoid update)
+    // shouldComponentUpdate(nextProps) {
+    //     return nextProps.shouldPlay // || this.player.getPlayerState() != 1
+    // }
+
+    const _onEnd = (event) => {
+        clearInterval(decreaseId);
+        clearInterval(starterId);
+        clearInterval(monitorID);
+        forceUpdate();
+    }
+
+    //catch update when (only) shouldPlay changes - meaning that the video should slowly start
+    //this is where videoId actually gets updated! 
+    // componentDidUpdate() {     
+    //     if(this.props.shouldPlay && this.player.getPlayerState() != 1) {//start if SHOULD PLAY recieved
+    //         this.videoStarter()
+    //     }
+    // }
+
+    useEffect(() => { //start if SHOULD PLAY recieved
+        if (player && player.getPlayerState() !== 1)
+            videoStarter()       
+    },[props.shouldPlay])
+    
+        return (
+            
+            <React.Fragment>
+                <YouTube
+                    videoId={props.videoId}
+                    id={'vid'}
+                    opts={opts}
+                    onPlay={_onVideoPlay}
+                    onReady={_onPlayerReady}
+                    //onPause={_onPause}
+                    onEnd={_onEnd}
+                    //onError={_onError}
+                />
+                <button className="button buttonNext" onClick={onClickNext}>Next song >></button>
+          </React.Fragment>
+        );
+      
+
+  
+}
+
+export default YtPlayer;
