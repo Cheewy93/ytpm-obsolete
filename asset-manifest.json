@@ -5,20 +5,20 @@
     "main.js.map": "/ytpm-obsolete/static/js/main.c6ba8440.chunk.js.map",
     "runtime-main.js": "/ytpm-obsolete/static/js/runtime-main.fef52acf.js",
     "runtime-main.js.map": "/ytpm-obsolete/static/js/runtime-main.fef52acf.js.map",
-    "static/js/2.c91a94f2.chunk.js": "/ytpm-obsolete/static/js/2.c91a94f2.chunk.js",
-    "static/js/2.c91a94f2.chunk.js.map": "/ytpm-obsolete/static/js/2.c91a94f2.chunk.js.map",
+    "static/js/2.ff2bfad6.chunk.js": "/ytpm-obsolete/static/js/2.ff2bfad6.chunk.js",
+    "static/js/2.ff2bfad6.chunk.js.map": "/ytpm-obsolete/static/js/2.ff2bfad6.chunk.js.map",
     "index.html": "/ytpm-obsolete/index.html",
-    "precache-manifest.170722679c307f0f489b862c18529628.js": "/ytpm-obsolete/precache-manifest.170722679c307f0f489b862c18529628.js",
+    "precache-manifest.9e4bceebadac04eda801fe9fa2807ecb.js": "/ytpm-obsolete/precache-manifest.9e4bceebadac04eda801fe9fa2807ecb.js",
     "service-worker.js": "/ytpm-obsolete/service-worker.js",
     "static/css/main.122e4116.chunk.css.map": "/ytpm-obsolete/static/css/main.122e4116.chunk.css.map",
-    "static/js/2.c91a94f2.chunk.js.LICENSE": "/ytpm-obsolete/static/js/2.c91a94f2.chunk.js.LICENSE",
+    "static/js/2.ff2bfad6.chunk.js.LICENSE": "/ytpm-obsolete/static/js/2.ff2bfad6.chunk.js.LICENSE",
     "static/js/main.c6ba8440.chunk.js.LICENSE": "/ytpm-obsolete/static/js/main.c6ba8440.chunk.js.LICENSE",
     "static/media/loading.gif": "/ytpm-obsolete/static/media/loading.70392d3b.gif",
     "static/media/logo.png": "/ytpm-obsolete/static/media/logo.ba6b12ca.png"
   },
   "entrypoints": [
     "static/js/runtime-main.fef52acf.js",
-    "static/js/2.c91a94f2.chunk.js",
+    "static/js/2.ff2bfad6.chunk.js",
     "static/css/main.122e4116.chunk.css",
     "static/js/main.c6ba8440.chunk.js"
   ]
